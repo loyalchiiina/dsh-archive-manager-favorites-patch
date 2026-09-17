@@ -56,10 +56,6 @@ Put inactive conversations away and find them again when needed, keeping everyda
 
 ## Screenshots
 
-Archive a chat from the sidebar session menu:
-
-![Archive a session from the session menu](assets/screenshots/archive-session-menu.png)
-
 Find, restore, and clean up chats in **Settings → Archived sessions**:
 
 ![Archived sessions settings page](assets/screenshots/archived-sessions.png)

@@ -56,10 +56,6 @@
 
 ## 界面预览
 
-从侧栏会话菜单归档聊天：
-
-![从会话菜单归档会话](assets/screenshots/archive-session-menu.png)
-
 在「设置 → 归档会话」集中查找、恢复和清理：
 
 ![归档会话管理页](assets/screenshots/archived-sessions.png)
