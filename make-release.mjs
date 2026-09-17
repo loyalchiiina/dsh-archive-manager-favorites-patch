@@ -30,7 +30,7 @@ const NEW_API = "api/dsh-archive-manager-plus";
 const UPSTREAM_URL = "https://github.com/MichengAI/dsh-archive-manager";
 const BASE_VERSION = "0.1.40";
 const RELEASE_VERSION = "0.1.40-plus.1";
-const REPO_URL = "https://github.com/loyalchiiina/dsh-archive-manager-plus";
+const REPO_URL = "https://github.com/loyalchiiina/dsh-archive-manager-favorites-patch";  // A 方案：上传统一用本仓库
 
 function writeText(path, text) {
 	// UTF-8 无 BOM（DSH 加载器不接受 BOM）
@@ -90,13 +90,13 @@ function buildPackageJson() {
 	raw.homepage = REPO_URL;
 	raw.repository = { type: "git", url: `${REPO_URL}.git` };
 	raw.bugs = { url: `${REPO_URL}/issues` };
-	// 原作者保留在 author，本仓库维护者写入 contributors（Apache-2.0 署名要求）
-	raw.author = typeof raw.author === "string"
-		? { name: "MichengAI", url: UPSTREAM_URL, email: "" }
-		: { ...(raw.author ?? {}), name: raw.author?.name ?? "MichengAI", url: UPSTREAM_URL };
+	// 2026-09-17 用户决策：author = 本包制作者 loyalchiiina（显示"我做的"）；
+	// 上游 MichengAI 保留在 contributors + NOTICE + LICENSE（Apache-2.0 合规：保留版权与许可原文即可，
+	// 不要求在 author 字段署名原作者）。
+	raw.author = { name: "loyalchiiina", url: "https://github.com/loyalchiiina", email: "" };
 	raw.contributors = [
-		{ name: "MichengAI", url: UPSTREAM_URL, note: `上游作者，本包基于其 ${BASE_VERSION} 版本修改` },
-		{ name: "loyalchiiina", url: "https://github.com/loyalchiiina", note: "增强功能与本地维护" },
+		{ name: "loyalchiiina", url: "https://github.com/loyalchiiina", note: "本增强版制作者与维护者" },
+		{ name: "MichengAI", url: UPSTREAM_URL, note: `上游作者，本包基于其 ${BASE_VERSION} 版本修改（致谢）` },
 	].concat(Array.isArray(raw.contributors) ? raw.contributors : []);
 	raw.keywords = Array.from(new Set([...(raw.keywords ?? []), "dsh-plugin", "archive", "favorites", "pin", "fork"])).slice(0, 16);
 	// 更新说明指向本仓库，安装命令同步改名
@@ -136,17 +136,16 @@ See README.md / README.zh-CN.md for the full attribution and changelog of this f
 
 const SOURCE_SECTION_ZH = `## 来源与致谢（必读）
 
-本仓库是 **[@michengai/dsh-archive-manager](https://github.com/MichengAI/dsh-archive-manager) 的修改版（fork）**，不是原作者的官方仓库。
+**本插件包由 [loyalchiiina](https://github.com/loyalchiiina) 制作并维护** —— 收藏 / 置顶 / 按轮次排序 / 闲置自动归档等增强功能、发布打包与文档，均由本仓库完成。
 
 | 项目 | 说明 |
 |---|---|
-| 上游项目 | [MichengAI/dsh-archive-manager](https://github.com/MichengAI/dsh-archive-manager) —— 「归档会话」插件 |
-| 上游作者 | **MichengAI**（感谢他开发的完整归档管理与体验优化，本包的全部基础能力都来自他的项目） |
-| 基线版本 | **v0.1.40**（本包的所有代码来自该版本的发布产物，之后在此基础上打补丁） |
-| 许可证 | Apache License 2.0（沿用上游许可证，原文见 \`LICENSE\`；修改声明见 \`NOTICE\`） |
-| 本包维护者 | [loyalchiiina](https://github.com/loyalchiiina) |
+| **本包作者 / 维护者** | **[loyalchiiina](https://github.com/loyalchiiina)** —— 本仓库发布的是我制作的增强版 |
+| 基线上游（致谢） | [MichengAI/dsh-archive-manager](https://github.com/MichengAI/dsh-archive-manager) —— 「归档会话」插件，作者 **MichengAI**；本包的**基础能力与原始设计**来自他的项目，**在此致谢** |
+| 基线版本 | **v0.1.40**（其发布产物构成底座，增强层在其上打补丁） |
+| 许可证 | Apache License 2.0（沿用上游许可证原文 \`LICENSE\`；修改声明见 \`NOTICE\`） |
 
-上游的一切既有功能、设计与版权归属均归原作者 MichengAI 所有；本仓库仅记录我在此之上追加的功能改动。若你希望支持原作者，请前往上游仓库使用官方版本并给他点 Star。
+按 Apache-2.0 要求，**基线既有代码的版权仍归 MichengAI 所有**；而下方「本版新增的功能」所列全部内容，均由 loyalchiiina 编写与维护。
 
 ### 本 fork 新增的功能
 
@@ -185,17 +184,16 @@ function patchReadmes() {
 
 const SOURCE_SECTION_EN = `## Provenance & credits (please read)
 
-This repository is a **modified fork of [@michengai/dsh-archive-manager](https://github.com/MichengAI/dsh-archive-manager)**. It is not the original author's official repository.
+**This package is built and maintained by [loyalchiiina](https://github.com/loyalchiiina)** — the favorites / pin / turns / auto-archive enhancements, the release packaging and the current documentation are all authored here.
 
 | Item | Detail |
 |---|---|
-| Upstream project | [MichengAI/dsh-archive-manager](https://github.com/MichengAI/dsh-archive-manager) — the "Archived sessions" plugin |
-| Upstream author | **MichengAI** — every existing capability, the design and all baseline behaviour come from his project; thanks to him |
-| Baseline version | **v0.1.40** (this package ships that release's code, patched on top) |
-| License | Apache License 2.0 (upstream license retained verbatim in \`LICENSE\`; modifications documented in \`NOTICE\`) |
-| Fork maintainer | [loyalchiiina](https://github.com/loyalchiiina) |
+| Package author / maintainer | **[loyalchiiina](https://github.com/loyalchiiina)** — the enhanced build published in this repository |
+| Baseline upstream | [MichengAI/dsh-archive-manager](https://github.com/MichengAI/dsh-archive-manager) — the "Archived sessions" plugin by **MichengAI**; all baseline capabilities and the original design come from his project (**thank you!**) |
+| Baseline version | **v0.1.40** (that release's code forms the base layer, patched on top) |
+| License | Apache License 2.0 (upstream \`LICENSE\` retained verbatim; modifications documented in \`NOTICE\`) |
 
-All pre-existing functionality, design and copyright belong to MichengAI. This repo only documents what I added on top. To support the original author, use the official upstream package and star his repository.
+Copyright of the pre-existing baseline code remains with MichengAI as required by Apache-2.0; everything documented under "what this adds" below is authored and maintained by loyalchiiina.
 
 ### What this fork adds
 
