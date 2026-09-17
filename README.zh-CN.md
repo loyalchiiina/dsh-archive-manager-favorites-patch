@@ -25,10 +25,6 @@
 
 ---
 
-<p align="center">
-  <img src="assets/branding/dsh-banner.png" alt="DSH Archive Manager" width="100%">
-</p>
-
 <div align="center">
 
 # DSH Archive Manager
