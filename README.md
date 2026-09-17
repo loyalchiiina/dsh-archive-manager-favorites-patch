@@ -1,248 +1,175 @@
-# dsh-archive-manager 增强补丁（收藏置顶 · 排序 · 一键归档 · 一键删除）
+## Provenance & credits (please read)
 
-> 给 DSH Desktop 的归档插件 `@michengai/dsh-archive-manager` 加功能：
-> **会话收藏与置顶**、**侧边栏按时间排序（升/降序）**、**按时间一键归档**、**一键删除已归档（带加速与进度条）**。
->
-> 不改上游 npm 包，用**补丁工程**在本地增强；升级/重装后一条命令即可重放。
+**This package is built and maintained by [loyalchiiina](https://github.com/loyalchiiina)** — the favorites / pin / turns / auto-archive enhancements, the release packaging and the current documentation are all authored here.
 
----
-
-## 📸 效果预览
-
-### 侧边栏：收藏星标 + 置顶图钉 + 三态时间排序
-
-![侧边栏菜单与排序](assets/sidebar-menu-sort.png)
-
-> 会话行左侧：📌 置顶图钉 + ⭐ 收藏星标**并列显示**；
-> 工作区「…」菜单：**按时间排序（关闭 / 降序 / 升序）** + 自动归档闲置会话 + 归档全部聊天。
-
-### 归档设置页：按时间筛选归档 + 收藏管理
-
-![归档设置页](assets/settings-archive-panel.png)
-
-> 按闲置天数一键归档（含进度条）、只看收藏、已收藏计数、全部恢复 / 全部删除 / 删除全部未收藏。
-
----
-
-## ✨ 功能总览
-
-### 1. 会话收藏（星标）
-
-| 位置 | 功能 |
+| Item | Detail |
 |---|---|
-| **侧边栏会话行** | 收藏的会话在标题左侧显示**金色实心星**（与置顶图钉并列） |
-| **归档会话页** | 每条聊天左侧星标按钮，点击收藏 / 取消（任一处操作，另一处实时同步） |
-| **只看收藏** | 工具栏开关，一键过滤出已收藏项，旁显「已收藏 n 条」 |
-| **收藏置顶** | 列表内已收藏项自动排在同组最前 |
-| **删除全部未收藏** | 一键删除「全部归档中未收藏的聊天」，已收藏一律保留 |
-| **删除当前筛选未收藏** | 只作用于当前项目筛选 / 搜索结果中的未收藏项 |
-| **收藏清理** | 单条或批量删除成功后，自动从收藏集合移除对应 id |
+| Package author / maintainer | **[loyalchiiina](https://github.com/loyalchiiina)** — the enhanced build published in this repository |
+| Baseline upstream | [MichengAI/dsh-archive-manager](https://github.com/MichengAI/dsh-archive-manager) — the "Archived sessions" plugin by **MichengAI**; all baseline capabilities and the original design come from his project (**thank you!**) |
+| Baseline version | **v0.1.40** (that release's code forms the base layer, patched on top) |
+| License | Apache License 2.0 (upstream `LICENSE` retained verbatim; modifications documented in `NOTICE`) |
 
-状态持久化：`localStorage` → `dsham.favoriteArchivedSessions.v1`
+Copyright of the pre-existing baseline code remains with MichengAI as required by Apache-2.0; everything documented under "what this adds" below is authored and maintained by loyalchiiina.
 
-### 2. 会话置顶
+### What this fork adds
 
-- 侧边栏「…」菜单可**置顶 / 取消置顶**
-- 置顶项显示**图钉标记**，整体排在未置顶之前
-- 与排序共存时：**置顶整体优先，置顶组内仍按时间排**
-- 状态持久化：`dsham.pinnedSessions.v1`
+1. **Favorites for archived sessions** — inline star buttons plus sidebar menu entries, a "favorites only" filter, favorited-first ordering inside each group, and automatic pruning when chats are deleted.
+2. **One-click delete of unfavorited chats** — two scopes: all archived chats outside favorites, or only those in the current filtered results, sharing the existing confirmation dialog.
+3. **Pin sessions** — pin from the sidebar session menu; pinned rows always sort first within their group without touching the host's manual ordering data.
+4. **Sort by conversation turns** — a new "Turns" sort plus a per-row turn badge. Counts are derived locally from session transcripts with the same semantics as official `sessionStats`: **no model calls, zero token cost**, cached per persisted revision.
+5. **Copy session ID / transcript path** — three clipboard entries in the sidebar menu; paths are resolved through the official persistence backend via a loopback-only read route.
+6. **Archive settings layout rework** — rows wrap onto two lines so titles are no longer squeezed; toolbar and batch-action header become grouped cards.
+7. **Trimmed UI** — this fork hides the "GitHub" / "Issues" header links and the built-in "check for updates" button (a pure UI preference, no functional impact).
 
-### 3. 侧边栏按时间排序（三态）
-
-工作区「…」菜单里三选一（当前项打勾）：
-
-| 选项 | 效果 |
-|---|---|
-| **按时间排序：关闭** | 保持原有顺序（置顶前置，其余不动） |
-| **按时间排序：降序（新→旧）** | 最新会话在前 |
-| **按时间排序：升序（旧→新）** | 最旧会话在前 |
-
-排序规则：
-```
-最终顺序 = [ 置顶组（按时间排）] + [ 未置顶组（按时间排）]
-```
-- 无时间戳的会话固定排在最后
-- 切换立即生效（已修正 useMemo 依赖）
-
-状态持久化：`dsham.sidebarSortByTime.v2`（自动兼容 v1 的布尔值）
-
-### 4. 按时间一键归档（按闲置天数）
-
-- 设置页「归档会话」内新增卡片：**按时间筛选归档**
-- 可设**闲置天数阈值**，实时显示「当前有 N 个会话闲置超过 X 天」
-- 点「归档这些会话」→ **逐条归档 + 进度条**
-- **撤回上一步**：一键恢复刚归档的会话
-- **判定口径**：以**最后一次对话时间**为准；时间未知的会话不会被自动归档
-- **范围口径**：只统计**侧边栏可见的未归档会话**（各工作区 `sessionIds` 并集），不含子代理残留
-
-### 5. 一键删除已归档（加速 + 进度条）
-
-- 支持**删除全部 / 按工作区 / 按选中项**
-- **速度优化**：修复上游 O(n²) 全盘扫描（详见下文「性能修复」）
-- **进度条**：显示 `删除进度 20 / 20（100%）· 1.4s`，完成后停留 10 秒
-- **安全保护**：每步带超时（默认 5 秒/步），不会永久卡死主进程
-- **降级链**：安全删除 → 快速删除 → 分批删除 → 原版删除（保证一定能删）
-- **同步日志**：每步写入 `~/.dsh/archive-manager-delete.log`，卡死也能定位
-
-### 6. 侧边栏「…」菜单其他增强
-
-- **收藏 / 取消收藏**
-- **复制会话 ID**
-- **复制会话文件路径**（转录工件绝对路径，如 `...\<sessionId>.jsonl`）
-- **复制 ID + 文件路径**（一键复制两行）
-
-复制结果短暂显示在会话行的时间位置。
+> ⚠️ This package **cannot coexist** with upstream `dsh-archive-manager-plus`: both provide the same host services (workspace / projection cache / ui-workspace). Install one of them.
 
 ---
 
-## 🔧 性能修复（本次核心）
+<p align="center">
+  <img src="assets/branding/dsh-banner.png" alt="DSH Archive Manager" width="100%">
+</p>
 
-### 问题：批量删除"卡死"
+<div align="center">
 
-上游 `deleteSessionCore` 逐条删除时，`deleteDescendants` 与 `sessionKnown` **每个会话都全盘扫描一次**：
+  # DSH Archive Manager
 
-```js
-// 上游 dsh-workspace 基类
-async listStoredHeaders() {
-  return (await this.ctx.sessionPersistence.list()).map((s) => s.header);
-}
-// sessionPersistence.list 内部对每个转录文件做一次 stat
-for (const artifact of await this.listArtifacts(signal)) {
-  const identity = await stat(artifact.path, { bigint: true });   // ← 每个文件一次
-}
+  **Safely manage archived sessions in DeepSeek Harness**
+
+  [简体中文](README.zh-CN.md) · [Changelog](CHANGELOG.md) · [Apache-2.0](LICENSE)
+
+  [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+  [![npm package](https://img.shields.io/npm/v/%40michengai%2Fdsh-archive-manager.svg?label=npm%20package)](https://www.npmjs.com/package/dsh-archive-manager-plus)
+  [![npm downloads](https://img.shields.io/npm/dt/%40michengai%2Fdsh-archive-manager.svg?label=npm%20downloads)](https://www.npmjs.com/package/dsh-archive-manager-plus)
+  [![DSH Web Plugin](https://img.shields.io/badge/DSH%20Web-Plugin-0f766e.svg)](https://github.com/MichengAI/dsh-archive-manager)
+</div>
+
+> DSH Archive Manager is a community-maintained DeepSeek Harness (DSH) plugin, not an official DeepSeek AI product.
+
+## What you can do
+
+Put inactive conversations away and find them again when needed, keeping everyday task lists tidy.
+
+- **Archive conversations**: put away one chat or all unarchived chats in a workspace.
+- **Find past work**: search titles, filter by project, and sort by time or title.
+- **Restore tasks**: restore one chat, selected chats, a project group, or all archives.
+- **Clean up records**: permanently delete unwanted archived conversations after confirmation.
+
+## Screenshots
+
+Archive a chat from the sidebar session menu:
+
+![Archive a session from the session menu](assets/screenshots/archive-session-menu.png)
+
+Find, restore, and clean up chats in **Settings → Archived sessions**:
+
+![Archived sessions settings page](assets/screenshots/archived-sessions.png)
+
+## Prerequisites
+
+- A working [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) Web installation with `dsh` available in your terminal.
+- Supported DSH versions: `0.1.0-rc.8`, `0.1.1-rc.2`, `0.1.2-rc.1`, `0.1.5-rc.1`, and `0.1.5-rc.2`. Other versions are not currently supported.
+- Node.js matching `^22.19.0 || >=24.0.0`. Source installation also requires pnpm.
+
+## Installation
+
+Examples use the `web` profile. Replace it with the profile you actually use.
+
+### Ask an agent to install it
+
+Send this prompt to an agent that can run terminal commands on your computer:
+
+```text
+Install the latest dsh-archive-manager-plus into my local DSH web profile using the official npm registry. Check the plugin configuration afterward, then explain how to reload DSH and open archived session management.
 ```
 
-**800+ 个会话文件 × 380 次调用 = 30 万次 stat** → 240ms/会话 → 总计 **90 秒+**（表现为"卡死"）。
+### Install manually
 
-### 修复
-
-| 修复 | 做法 |
-|---|---|
-| **子会话索引** | 批量入口 `buildDescendantsIndex()` **只扫一次**，循环内查内存表 |
-| **存在性缓存** | `knownSessionIds` Set + 批量预热，`sessionKnown` 命中即返回 |
-| **并发删文件** | `Promise.allSettled` 并发（默认 8-12）删转录目录 |
-| **索引合并写盘** | 归档集合 + 工作区账户各只写**一次**（原来每条会话写 2 次） |
-
-**效果**：90 秒+ → **几秒**。
-
-> 所有修复**保留原分支逻辑**（墓碑检查、级联删除、安全检查），只优化扫描路径。
-
----
-
-## 📦 安装与使用
-
-### 前置
-
-- DSH Desktop 已安装
-- 目标插件已装：`@michengai/dsh-archive-manager`（建议 0.1.40）
-  ```powershell
-  # 若未安装
-  dsh plugin add @michengai/dsh-archive-manager
-  ```
-
-### 应用补丁
+Run in PowerShell:
 
 ```powershell
-cd <你的插件目录>\dsh-archive-manager-favorites-patch
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
-node apply-all.mjs            # 一键：恢复基线 → 顺序重放全部补丁 → 跑门禁
-node apply-all.mjs --dry-run  # 只校验锚点，不写盘
+dsh plugin --profile web add dsh-archive-manager-plus@latest --registry=https://registry.npmjs.org/
 ```
 
-`apply-all.mjs` 会：
-1. 从 `~/.dsh/backups/` 恢复基线文件
-2. 按顺序重放各批补丁
-3. **门禁 1**：remote 声明结构校验（防 DSH 起不来）
-4. **门禁 2**：客户端 / 宿主端一致性
-5. 任一失败 → **自动回滚** + 非 0 退出
+Restart DSH Web, then hard-refresh your browser with `Ctrl+Shift+R`. Open **Settings → Archived sessions** to get started.
 
-### 生效
+## Usage
 
-**完全退出 DSH 再启动**（不是刷新页面），然后 `Ctrl+Shift+R` 硬刷新。
+| Goal | Action |
+| --- | --- |
+| Archive one chat | Open its sidebar menu and choose **Archive session** |
+| Archive a workspace | Open the workspace menu and choose the option to archive its chats |
+| Find an archive | Open **Settings → Archived sessions**, then search titles or filter by project |
+| Change the order | Sort by update time, creation time, or title |
+| Restore one chat | Click **Unarchive** beside the session |
+| Restore or delete in bulk | Select chats and use the bulk actions, or use the project menu or page-wide actions |
 
-### 回滚
+Selections persist when filters change. Check the hidden selection count before applying bulk actions, or clear your selection first.
+
+### View and continue archived conversations
+
+Available starting with `0.1.40`:
+
+- **View conversation**: open the native DSH session to view messages, attachments, and tool details. Continue chatting while keeping the session archived.
+- **Restore and open**: unarchive the session and open it to resume work.
+
+## Updates
+
+Click **Check for updates** in the archive management page header. DSH CLI or Desktop environments with automatic update support can update directly; other environments provide a manual command for the current profile. You can also rerun the installation command above.
+
+## FAQ
+
+### Why is the entry missing after installation?
+
+Restart DSH Web and hard-refresh your browser. Make sure you installed into the profile you are using. If the entry is still missing, run:
 
 ```powershell
-# 方式一：恢复基线
-copy ~/.dsh/backups/archive-manager-favorites-<时间戳>/client.js.orig  <插件目录>/lib/client.js
-copy ~/.dsh/backups/archive-manager-favorites-<时间戳>/workspace.js.orig <插件目录>/lib/workspace.js
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
-# 方式二：直接在 DSH 里卸载插件后重装
-dsh plugin remove @michengai/dsh-archive-manager
-dsh plugin add @michengai/dsh-archive-manager
+dsh --profile web --dump-config
 ```
 
----
+The configuration should include `workspace-archive-manager` and `ui-workspace-archive-manager`. If you previously set the official `ui-workspace` to `disabled: true` in your profile's `cordis.patch.yml`, remove that disabling override and restart.
 
-## 🔒 隐私说明
+### How is archiving different from deletion?
 
-本仓库**不含**任何：
+Archiving puts a conversation away so you can restore it later. **Permanent deletion cannot be undone** and may also remove that session's attachments. It does not delete your project working directory. Deletion requires confirmation.
 
-- API key / token / 私钥 / 密码
-- 本机用户名或 `C:\Users\<用户名>` 路径
-- 真实内网 IP（示例用 RFC 5737 文档保留地址 `203.0.113.x`）
-- 邮箱地址
+### Can I use it with Codex UI?
 
-所有本机路径均通过 `homedir()` / 环境变量**动态获取**。
+Yes. [Codex UI](https://github.com/MichengAI/dsh-codex-ui) keeps its sidebar appearance and interactions. Archive management remains available in **Settings → Archived sessions**.
 
-`@michengai/dsh-archive-manager` 是**上游 npm 公开包名**，补丁需引用它定位目标目录，属必要信息。
+For other problems, open an [issue](https://github.com/MichengAI/dsh-archive-manager/issues) with your DSH and plugin versions, reproduction steps, and error details.
 
----
+## Install from source
 
-## 📁 项目结构
+<details>
+<summary>Expand for development or testing unreleased changes</summary>
 
-```
-dsh-archive-manager-favorites-patch/
-├── apply-all.mjs                      # ★ 一键重放（含门禁与回滚）
-├── apply-idle-auto-archive-patch.mjs  # ★ 主补丁（C1-C19 + W1-W14）
-├── apply-patch.mjs                    # 早期补丁：收藏 / 复制
-├── apply-pin-patch.mjs                # 早期补丁：置顶
-├── apply-delete-progress-patch.mjs    # 早期补丁：删除进度
-├── apply-digest*.mjs                  # 早期补丁：对话摘要
-├── apply-layout-patch.mjs             # 早期补丁：布局
-├── apply-turns-patch.mjs              # 早期补丁：按轮次排序
-├── apply-hide-upstream-links-patch.mjs# 早期补丁：隐藏上游链接
-├── snippets/                          # ★ host 侧大段代码（避开模板转义）
-│   ├── host-safe-delete.js            #   安全删除（分步超时 + 日志）
-│   ├── host-fast-delete.js            #   快速删除（并发 + 索引合并）
-│   └── host-direct-delete.js          #   直删（自行解析目录 + rm）
-├── verify-remote-descriptors.mjs      # ★ 门禁：remote 声明结构校验
-├── verify-release.mjs                 # 发布前校验（含隐私扫描）
-├── probe-*.mjs                        # 各类探针 / 回归测试
-├── make-release.mjs                   # 发布打包
-└── README.md                          # 本文件
+Run these commands in a directory of your choice. For local changes that have not been pushed, use the existing working copy.
+
+```powershell
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
+
+git clone https://github.com/MichengAI/dsh-archive-manager.git
+Set-Location .\dsh-archive-manager
+pnpm install --frozen-lockfile
+pnpm build
+dsh plugin --profile web add .
 ```
 
----
+Restart DSH Web and hard-refresh your browser afterward. Edit [src](src), not the generated `lib` directory. Run `pnpm test` to validate changes or `pnpm verify` for the full checks.
 
-## 🧩 补丁批次说明
+</details>
 
-| 批次 | 内容 |
-|---|---|
-| `apply-patch.mjs` | 收藏星标、只看收藏、复制 ID/路径、宿主会话路径路由 |
-| `apply-pin-patch.mjs` | 会话置顶（侧边栏图钉 + 置顶优先） |
-| `apply-turns-patch.mjs` | 按轮次排序 |
-| `apply-digest*.mjs` | 行内对话摘要按钮 + 展开详情 + 视图 |
-| `apply-layout-patch.mjs` | 布局调整 |
-| `apply-hide-upstream-links-patch.mjs` | 隐藏上游链接 |
-| `apply-delete-progress-patch.mjs` | 批量删除提速 + 删除进度显示（早期版） |
-| **`apply-idle-auto-archive-patch.mjs`** | **主补丁**：按时间归档、进度条、排序三态、批量删除加速、侧边栏星标 |
+## Related projects
 
----
+[DSH Codex UI](https://github.com/MichengAI/dsh-codex-ui) provides project and conversation management. For a desktop workbench, see [DSH Codex Desktop](https://github.com/MichengAI/dsh-codex-desktop).
 
-## ⚠️ 已知限制
+## License
 
-1. **需要与上游版本匹配**：补丁基于 `@michengai/dsh-archive-manager@0.1.40` 的文件内容做锚点替换。上游大版本更新后锚点可能失配 → `apply-all.mjs` 会自动中止并回滚，此时需按新版调整锚点。
-2. **自动归档定时器尚未接入**：工作区菜单里的「自动归档闲置会话」开关已就绪（默认关），但定时执行逻辑待实现。
-3. **删除性能依赖修复生效**：若宿主端补丁未生效（可看日志有无 `archive-manager(fast)` 输出），会回退到原版慢速删除。
-
----
-
-## 📄 License
-
-MIT
-
-## 🙏 致谢
-
-- 上游插件：[`@michengai/dsh-archive-manager`](https://www.npmjs.com/package/@michengai/dsh-archive-manager)（作者 MichengAI）
-- 本仓库仅为**本地增强补丁**，不含上游源码
+Licensed under [Apache License 2.0](LICENSE).
