@@ -1,0 +1,31 @@
+# === 上游源码副本（不含上传，版权归属上游作者）===
+upstream/
+
+# === 补丁脚本历史快照（本地演进记录，不入库）===
+*.bak-*
+*.bak
+*.orig
+
+# === 临时 / 实验脚本 ===
+_patch-*.mjs
+_tmp-*.mjs
+tmp/
+temp/
+
+# === 依赖与构建产物 ===
+node_modules/
+dist/
+*.tgz
+*.tar.gz
+*.zip
+
+# === 系统与编辑器 ===
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# === 日志与本地状态 ===
+*.log
+.cache/
