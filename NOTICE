@@ -1,0 +1,27 @@
+dsh-archive-manager-plus
+Copyright (c) 2026 loyalchiiina
+
+This product includes software developed by MichengAI as part of the
+"dsh-archive-manager" project (https://github.com/MichengAI/dsh-archive-manager),
+licensed under the Apache License, Version 2.0.
+
+This is a MODIFIED version. Based on upstream version 0.1.40.
+Modifications (all added in this fork):
+
+  - Favorites for archived sessions: star rows and sidebar menu entries,
+    "favorites only" filter, favorited-first ordering, one-click deletion of
+    unfavorited archived sessions (all / current filter), favorites pruned on delete.
+  - Pin sessions to top from the sidebar session menu (per-group precedence,
+    manual ordering data untouched).
+  - Sort archived sessions by conversation turn count, plus a per-row turn badge.
+    Turn counts are derived locally from session transcripts with the same
+    semantics as official `sessionStats`; no model calls, zero token cost.
+  - Sidebar session menu clipboard helpers: copy session ID, copy transcript file
+    path resolved through the persistence backend, or copy both at once.
+  - Archive settings layout rework: two-line rows so titles stop being squeezed,
+    carded toolbar and batch-action header.
+  - Hidden the upstream project links ("GitHub", "Issues") and the built-in
+    "check for updates" button in this fork's UI.
+
+The original LICENSE (Apache License 2.0) is retained unmodified in the LICENSE file.
+See README.md / README.zh-CN.md for the full attribution and changelog of this fork.
