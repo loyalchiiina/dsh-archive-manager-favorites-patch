@@ -52,6 +52,10 @@
 
 ## 界面预览
 
+在侧栏会话菜单里直接归档、置顶与排序会话：
+
+![侧边栏会话菜单与排序](assets/sidebar-menu-sort.png)
+
 在「设置 → 归档会话」集中查找、恢复和清理：
 
 ![归档会话管理页](assets/screenshots/archived-sessions.png)

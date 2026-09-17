@@ -52,6 +52,10 @@ Put inactive conversations away and find them again when needed, keeping everyda
 
 ## Screenshots
 
+Archive, pin, and sort chats right from the sidebar session menu:
+
+![Sidebar session menu and sorting](assets/sidebar-menu-sort.png)
+
 Find, restore, and clean up chats in **Settings → Archived sessions**:
 
 ![Archived sessions settings page](assets/screenshots/archived-sessions.png)
