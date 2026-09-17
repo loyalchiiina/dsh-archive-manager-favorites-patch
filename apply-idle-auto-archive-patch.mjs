@@ -254,6 +254,104 @@ const CLIENT_STATE_NEW = `        const [notice, setNotice] = (0, react.useState
             setIdleBusy(false);
           }
         };`;
+/* C21b：自动归档开关词条 */
+const C21B_ZH_OLD = [
+  "        \"archives.idleNote\": \"以最后一次对话时间为判定依据；时间未知的会话不会被自动归档。归档后可随时恢复。\","
+].join("\n");
+const C21B_ZH_NEW = [
+  "        \"archives.idleNote\": \"以最后一次对话时间为判定依据；时间未知的会话不会被自动归档。归档后可随时恢复。\",",
+  "        \"archives.autoArchiveToggle\": \"自动归档闲置会话\",",
+  "        \"archives.autoArchiveOffHint\": \"打开后，插件会定期自动归档超过阈值的会话（开关默认关闭）。\",",
+  "        \"archives.autoArchiveOnHint\": \"已开启：每 {minutes} 分钟检查一次，自动归档闲置超过 {days} 天的未归档会话。\","
+].join("\n");
+const C21B_EN_OLD = [
+  "        \"archives.idleNote\": \"Judged by the last conversation time; chats with an unknown timestamp are never auto-archived. Archived chats can always be restored.\","
+].join("\n");
+const C21B_EN_NEW = [
+  "        \"archives.idleNote\": \"Judged by the last conversation time; chats with an unknown timestamp are never auto-archived. Archived chats can always be restored.\",",
+  "        \"archives.autoArchiveToggle\": \"Auto-archive idle chats\",",
+  "        \"archives.autoArchiveOffHint\": \"When on, the plugin periodically archives chats past the threshold (off by default).\",",
+  "        \"archives.autoArchiveOnHint\": \"On: checks every {minutes} minutes and archives unarchived chats idle for more than {days} days.\","
+].join("\n");
+
+/* C21：设置页自动归档开关 */
+const C21_TOGGLE_OLD = "lastIdleArchive !== null ? (0, react_jsx_runtime.jsx)(\"button\", { type: \"button\", className: \"dsham_settingsIdleUndo\", disabled: idleBusy || busy, onClick: () => undoIdleArchive(), children: t(\"archives.idleUndo\") }) : null] })";
+const C21_TOGGLE_NEW = [
+  "lastIdleArchive !== null ? (0, react_jsx_runtime.jsx)(\"button\", { type: \"button\", className: \"dsham_settingsIdleUndo\", disabled: idleBusy || busy, onClick: () => undoIdleArchive(), children: t(\"archives.idleUndo\") }) : null] }), (0, react_jsx_runtime.jsxs)(\"div\", {",
+  "            className: \"dsham_settingsIdleAutoRow\",",
+  "            children: [(0, react_jsx_runtime.jsxs)(\"label\", {",
+  "              className: \"dsham_settingsIdleAutoToggle\",",
+  "              children: [(0, react_jsx_runtime.jsx)(\"input\", {",
+  "                type: \"checkbox\",",
+  "                checked: autoArchiveOn === true,",
+  "                disabled: idleBusy || busy,",
+  "                onChange: () => archiveAutoStore.toggle(),",
+  "                \"aria-label\": t(\"archives.autoArchiveToggle\")",
+  "              }), (0, react_jsx_runtime.jsx)(\"span\", { children: t(\"archives.autoArchiveToggle\") })]",
+  "            }), (0, react_jsx_runtime.jsx)(\"span\", {",
+  "              className: \"dsham_settingsIdleAutoHint\",",
+  "              children: autoArchiveOn === true",
+  "                ? t(\"archives.autoArchiveOnHint\", { minutes: Math.round(AUTO_ARCHIVE_INTERVAL_MS / 60000), days: formatIdleDays(idleDays) })",
+  "                : t(\"archives.autoArchiveOffHint\")",
+  "            })]",
+  "          })"
+].join("\n");
+const C21_CSS_OLD = ".dsham_settingsIdleNote{";
+const C21_CSS_NEW = ".dsham_settingsIdleAutoRow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--dsw-alias-text-2,var(--dsw-alias-text-l2,#8a8f99))}.dsham_settingsIdleAutoToggle{display:inline-flex;align-items:center;gap:6px;cursor:pointer;color:var(--dsw-alias-text-l1,inherit)}.dsham_settingsIdleAutoToggle input{cursor:pointer}.dsham_settingsIdleAutoHint{opacity:.85}.dsham_settingsIdleNote{";
+
+/* C20：自动归档（设置界面开关 + 定时器） */
+const C20_TIMER_OLD = [
+  "        const runIdleArchive = async () => {"
+].join("\n");
+const C20_TIMER_NEW = [
+  "        // === 自动归档：开关状态 + 定时执行 ===",
+  "        const autoArchiveOn = (0, react.useSyncExternalStore)(archiveAutoStore.subscribe, archiveAutoStore.getSnapshot);",
+  "        const [autoArchiveTicks, setAutoArchiveTicks] = (0, react.useState)(0);",
+  "        /**",
+  "         * 自动归档定时器：开关打开后每 AUTO_ARCHIVE_INTERVAL_MS 检查一次，",
+  "         * 有超期未归档会话才执行（复用 runIdleArchive，含进度条/撤回/错误处理）。",
+  "         * 开关关闭或组件卸载时自动清理，不会泄漏定时器。",
+  "         */",
+  "        (0, react.useEffect)(() => {",
+  "          if (autoArchiveOn !== true) return void 0;",
+  "          const tick = () => {",
+  "            try {",
+  "              // 只计数触发；真正的判断与执行交给下方效应（它能看到最新的候选集）",
+  "              setAutoArchiveTicks((n) => n + 1);",
+  "            } catch (error) {",
+  "              console.warn(\"archive-manager: auto archive tick failed:\", error);",
+  "            }",
+  "          };",
+  "          const timer = setInterval(tick, AUTO_ARCHIVE_INTERVAL_MS);",
+  "          // 打开开关后 30 秒先跑一次，不必等满一个周期",
+  "          const firstRun = setTimeout(tick, 30000);",
+  "          return () => {",
+  "            clearInterval(timer);",
+  "            clearTimeout(firstRun);",
+  "          };",
+  "        }, [autoArchiveOn]);",
+  "        /**",
+  "         * 每次 tick 时执行：仍有超期未归档会话才归档。",
+  "         * 依赖 autoArchiveTicks，所以每次触发都会用最新的 idleCandidateIds。",
+  "         */",
+  "        (0, react.useEffect)(() => {",
+  "          if (autoArchiveTicks === 0) return;",
+  "          if (autoArchiveOn !== true) return;",
+  "          if (idleBusy || busy) return;",
+  "          if (idleCandidateIds.length === 0) return;",
+  "          runIdleArchive();",
+  "        }, [autoArchiveTicks]);",
+  "        const runIdleArchive = async () => {"
+].join("\n");
+const C20_CONST_OLD = [
+  "      /** 闲置自动归档阈值（天）持久化键与读写。 */"
+].join("\n");
+const C20_CONST_NEW = [
+  "      /** 自动归档定时器检查周期（毫秒）。默认 30 分钟。 */",
+  "      const AUTO_ARCHIVE_INTERVAL_MS = 30 * 60 * 1000;",
+  "      /** 闲置自动归档阈值（天）持久化键与读写。 */"
+].join("\n");
+
 /* C19：侧边栏会话行加收藏星标（与置顶并列） */
 const C19_STAR_OLD = "children: [pinned === true && (0, react_jsx_runtime.jsx)(\"span\", { className: \"dsham_pinBadge\", title: t(\"pin.label\"), \"aria-label\": t(\"pin.label\"), children: (0, react_jsx_runtime.jsx)(ArchivePinIcon, { filled: true }) }), (0, react_jsx_runtime.jsx)(\"span\", {";
 const C19_STAR_NEW = [
@@ -2283,6 +2381,12 @@ const TARGETS = [
 	{ name: "W14b-sessionKnown插入缓存", old: W14B_KNOWN_OLD, to: W14B_KNOWN_NEW },
 	{ name: "C19-侧边栏星标", old: C19_STAR_OLD, to: C19_STAR_NEW },
 	{ name: "C19-星标 CSS", old: C19_CSS_OLD, to: C19_CSS_NEW },
+	{ name: "C20-自动归档常量", old: C20_CONST_OLD, to: C20_CONST_NEW },
+	{ name: "C20-自动归档定时器", old: C20_TIMER_OLD, to: C20_TIMER_NEW },
+	{ name: "C21-设置页自动归档开关", old: C21_TOGGLE_OLD, to: C21_TOGGLE_NEW },
+	{ name: "C21-自动归档开关 CSS", old: C21_CSS_OLD, to: C21_CSS_NEW },
+	{ name: "C21b-自动归档词条(中文)", old: C21B_ZH_OLD, to: C21B_ZH_NEW },
+	{ name: "C21b-自动归档词条(英文)", old: C21B_EN_OLD, to: C21B_EN_NEW },
 // [disabled] { name: "W5-宿主快速删除", old: HOST_FASTDEL_ANCHOR, to: HOST_FASTDEL_NEW },
 // [disabled] { name: "W6a-快速删除 remote 声明", old: HOST_FASTDEL_REMOTE_OLD, to: HOST_FASTDEL_REMOTE_NEW },
 // [disabled] { name: "W6b-快速删除 mark", old: HOST_FASTDEL_MARK_OLD, to: HOST_FASTDEL_MARK_NEW },
