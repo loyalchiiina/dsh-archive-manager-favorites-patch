@@ -25,6 +25,52 @@
 
 ---
 
+## 功能总览 · At a glance（中英对照 / Bilingual）
+
+*在上游 v0.1.40 之上增强的功能。*
+
+### 收藏与筛选 · Favorites & filtering
+
+| 中文 | English |
+|---|---|
+| 会话收藏：行内星标 + 侧边栏菜单入口，「只看收藏」一键过滤 | Favorites for archived sessions: inline stars + sidebar menu entries and a "favorites only" filter |
+| 收藏项在分组内自动排最前；删除聊天后自动清理失效收藏 | Favorited-first ordering inside each group; auto-pruning when chats are deleted |
+| 一键删除全部未收藏 / 当前筛选结果内未收藏 | One-click delete of unfavorited chats — all archives or only the current filtered results |
+
+### 置顶与排序 · Pinning & sorting
+
+| 中文 | English |
+|---|---|
+| 会话置顶：侧边栏「…」菜单置顶/取消，置顶项在组内始终排最前（不改动宿主手动排序数据） | Pin sessions from the sidebar menu; pinned rows sort first in their group without touching the host's manual ordering |
+| 按时间三态排序：关闭 / 降序（新→旧）/ 升序（旧→新），置顶组整体优先 | New time sorting: off / newest-first / oldest-first, pins always ahead |
+| 按对话轮次排序 + 每行轮次徽标；本地统计零 token（口径同官方 sessionStats） | New "Turns" sort with a per-row badge, computed locally — zero model calls, zero tokens |
+
+### 一键归档 · One-click archive
+
+| 中文 | English |
+|---|---|
+| 按闲置天数一键归档：设置阈值 → 实时统计闲置会话 → 逐条归档 + 进度条 | Idle-days archive: set the threshold, see "N idle over X days", archive with a live progress bar |
+| 一键撤回上一步归档 | One-step undo of the last archive run |
+| 判定以最后一次对话时间为准；只统计侧边栏可见的未归档会话 | Judged by last-conversation time; only visible unarchived sessions are counted |
+
+### 删除与复制 · Delete & copy
+
+| 中文 | English |
+|---|---|
+| 批量删除提速（修复上游 O(n²) 全盘扫描 → 索引 + 缓存 + 并发），90 秒+ → 几秒 | Bulk delete speed-up (upstream O(n²) scan → indexed cache + concurrency): 90s+ → seconds |
+| 删除进度条 + 每步超时保护 + 安全/快速/分批/原版四级降级链 | Progress bar, per-step timeout, 4-tier fallback chain (safe → fast → batched → original) |
+| 侧边栏菜单复制会话 ID / 转录文件路径 / ID+路径（三选） | Sidebar menu copies session ID / transcript path / both |
+
+### 界面与协同 · UI & coexistence
+
+| 中文 | English |
+|---|---|
+| 归档设置界面排版重整：两行排布 + 工具栏/批量操作分组卡片 | Reworked archive-settings layout: two-line rows, grouped toolbar & batch-action cards |
+| 隐藏上游「GitHub / Issues」外链与「检查更新」按钮（纯界面取舍） | Hides upstream GitHub / Issues links and the update-check button (pure UI preference) |
+| 与上游 `dsh-archive-manager-plus` 不能共存（同名宿主服务），请二选一 | Cannot coexist with upstream `dsh-archive-manager-plus` (same host services) — install one |
+
+---
+
 <div align="center">
 
 # DSH Archive Manager
