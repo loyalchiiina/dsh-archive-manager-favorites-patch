@@ -1,6 +1,6 @@
 # 保留官方工作区 UI，仅替换归档需要的后端服务。
 # 自定义侧栏通过优先级覆盖插槽；发布后的安装命令：
-#   dsh plugin --profile web add dsh-archive-manager-plus
+#   dsh plugin --profile web add dsh-archive-manager-pro
 - id: workspace
   disabled: true
 - id: session-projection-cache
@@ -9,11 +9,11 @@
   disabled: false
 - insert:
     - id: workspace-archive-manager
-      name: 'dsh-archive-manager-plus/workspace'
+      name: 'dsh-archive-manager-pro/workspace'
     - id: session-projection-cache-archive-manager
-      name: 'dsh-archive-manager-plus/projcache'
+      name: 'dsh-archive-manager-pro/projcache'
       config:
         writeEveryEvents: 200
         writeIntervalMs: 5000
     - id: ui-workspace-archive-manager
-      name: 'dsh-archive-manager-plus'
+      name: 'dsh-archive-manager-pro'
