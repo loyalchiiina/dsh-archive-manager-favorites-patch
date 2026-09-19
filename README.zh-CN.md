@@ -21,7 +21,7 @@
 6. **归档设置界面排版重整**：每行改为两行排布（标题不再被按钮挤压），工具栏与批量操作头部改为分组卡片。
 7. **精简界面**：本 fork 隐藏了头部的「GitHub」「问题反馈」外链与「检查更新」按钮（纯界面取舍，不影响任何功能）。
 
-> ⚠️ 本包与上游 `dsh-archive-manager-plus` **不能同时安装**：两者提供同名宿主服务（workspace / 投影缓存 / ui-workspace），同时启用会互相覆盖。请二选一。
+> ⚠️ 本包与上游 `@michengai/dsh-archive-manager` **不能同时安装**：两者提供同名宿主服务（workspace / 投影缓存 / ui-workspace），同时启用会互相覆盖。请二选一。
 
 ---
 
@@ -67,7 +67,7 @@
 |---|---|
 | 归档设置界面排版重整：两行排布 + 工具栏/批量操作分组卡片 | Reworked archive-settings layout: two-line rows, grouped toolbar & batch-action cards |
 | 隐藏上游「GitHub / Issues」外链与「检查更新」按钮（纯界面取舍） | Hides upstream GitHub / Issues links and the update-check button (pure UI preference) |
-| 与上游 `dsh-archive-manager-plus` 不能共存（同名宿主服务），请二选一 | Cannot coexist with upstream `dsh-archive-manager-plus` (same host services) — install one |
+| 与上游 `@michengai/dsh-archive-manager` 不能共存（同名宿主服务），请二选一 | Cannot coexist with upstream `@michengai/dsh-archive-manager` (same host services) — install one |
 
 ---
 
@@ -80,8 +80,8 @@
   [English](README.md) · [更新日志](CHANGELOG.zh-CN.md) · [Apache-2.0](LICENSE)
 
   [![许可证：Apache-2.0](https://img.shields.io/badge/许可证-Apache--2.0-blue.svg)](LICENSE)
-  [![npm package](https://img.shields.io/npm/v/%40michengai%2Fdsh-archive-manager.svg?label=npm%20package)](https://www.npmjs.com/package/dsh-archive-manager-plus)
-  [![npm 下载量](https://img.shields.io/npm/dt/%40michengai%2Fdsh-archive-manager.svg?label=npm%20%E4%B8%8B%E8%BD%BD%E9%87%8F)](https://www.npmjs.com/package/dsh-archive-manager-plus)
+  [![npm package](https://img.shields.io/npm/v/%40michengai%2Fdsh-archive-manager.svg?label=npm%20package)](https://www.npmjs.com/package/@michengai/dsh-archive-manager)
+  [![npm 下载量](https://img.shields.io/npm/dt/%40michengai%2Fdsh-archive-manager.svg?label=npm%20%E4%B8%8B%E8%BD%BD%E9%87%8F)](https://www.npmjs.com/package/@michengai/dsh-archive-manager)
   [![DSH Web Plugin](https://img.shields.io/badge/DSH%20Web-Plugin-0f766e.svg)](https://github.com/MichengAI/dsh-archive-manager)
 </div>
 
@@ -121,7 +121,7 @@
 把下面这段话发给能执行本机终端命令的 Agent：
 
 ```text
-请将 dsh-archive-manager-plus 最新版安装到本机 DSH 的 web profile，使用官方 npm 源。安装后检查插件配置，并告诉我如何重新加载 DSH、进入归档会话管理页。
+请将 dsh-archive-manager-pro 最新版安装到本机 DSH 的 web profile，使用官方 npm 源。安装后检查插件配置，并告诉我如何重新加载 DSH、进入归档会话管理页。
 ```
 
 ### 手动安装
@@ -132,7 +132,7 @@
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
-dsh plugin --profile web add dsh-archive-manager-plus@latest --registry=https://registry.npmjs.org/
+dsh plugin --profile web add dsh-archive-manager-pro@latest --registry=https://registry.npmjs.org/
 ```
 
 安装后重启 DSH Web，并按 `Ctrl+Shift+R` 硬刷新浏览器。打开「设置 → 归档会话」即可使用。
