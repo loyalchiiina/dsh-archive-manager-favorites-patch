@@ -1,5 +1,5 @@
 {
-  "name": "dsh-archive-manager-plus",
+  "name": "dsh-archive-manager-pro",
   "version": "0.1.40-plus.1",
   "description": "归档会话增强版（fork 自 @michengai/dsh-archive-manager v0.1.40）：收藏与一键删除未收藏、置顶会话、按对话轮次排序、复制会话 ID 与转录文件路径、归档界面排版重整。",
   "type": "module",
