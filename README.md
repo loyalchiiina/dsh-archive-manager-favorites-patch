@@ -21,7 +21,7 @@ Copyright of the pre-existing baseline code remains with MichengAI as required b
 6. **Archive settings layout rework** — rows wrap onto two lines so titles are no longer squeezed; toolbar and batch-action header become grouped cards.
 7. **Trimmed UI** — this fork hides the "GitHub" / "Issues" header links and the built-in "check for updates" button (a pure UI preference, no functional impact).
 
-> ⚠️ This package **cannot coexist** with upstream `dsh-archive-manager-plus`: both provide the same host services (workspace / projection cache / ui-workspace). Install one of them.
+> ⚠️ This package **cannot coexist** with upstream `@michengai/dsh-archive-manager`: both provide the same host services (workspace / projection cache / ui-workspace). Install one of them.
 
 ---
 
@@ -67,7 +67,7 @@ Copyright of the pre-existing baseline code remains with MichengAI as required b
 |---|---|
 | 归档设置界面排版重整：两行排布 + 工具栏/批量操作分组卡片 | Reworked archive-settings layout: two-line rows, grouped toolbar & batch-action cards |
 | 隐藏上游「GitHub / Issues」外链与「检查更新」按钮（纯界面取舍） | Hides upstream GitHub / Issues links and the update-check button (pure UI preference) |
-| 与上游 `dsh-archive-manager-plus` 不能共存（同名宿主服务），请二选一 | Cannot coexist with upstream `dsh-archive-manager-plus` (same host services) — install one |
+| 与上游 `@michengai/dsh-archive-manager` 不能共存（同名宿主服务），请二选一 | Cannot coexist with upstream `@michengai/dsh-archive-manager` (same host services) — install one |
 
 ---
 
@@ -80,8 +80,8 @@ Copyright of the pre-existing baseline code remains with MichengAI as required b
   [简体中文](README.zh-CN.md) · [Changelog](CHANGELOG.md) · [Apache-2.0](LICENSE)
 
   [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
-  [![npm package](https://img.shields.io/npm/v/%40michengai%2Fdsh-archive-manager.svg?label=npm%20package)](https://www.npmjs.com/package/dsh-archive-manager-plus)
-  [![npm downloads](https://img.shields.io/npm/dt/%40michengai%2Fdsh-archive-manager.svg?label=npm%20downloads)](https://www.npmjs.com/package/dsh-archive-manager-plus)
+  [![npm package](https://img.shields.io/npm/v/%40michengai%2Fdsh-archive-manager.svg?label=npm%20package)](https://www.npmjs.com/package/@michengai/dsh-archive-manager)
+  [![npm downloads](https://img.shields.io/npm/dt/%40michengai%2Fdsh-archive-manager.svg?label=npm%20downloads)](https://www.npmjs.com/package/@michengai/dsh-archive-manager)
   [![DSH Web Plugin](https://img.shields.io/badge/DSH%20Web-Plugin-0f766e.svg)](https://github.com/MichengAI/dsh-archive-manager)
 </div>
 
@@ -121,7 +121,7 @@ Examples use the `web` profile. Replace it with the profile you actually use.
 Send this prompt to an agent that can run terminal commands on your computer:
 
 ```text
-Install the latest dsh-archive-manager-plus into my local DSH web profile using the official npm registry. Check the plugin configuration afterward, then explain how to reload DSH and open archived session management.
+Install the latest dsh-archive-manager-pro into my local DSH web profile using the official npm registry. Check the plugin configuration afterward, then explain how to reload DSH and open archived session management.
 ```
 
 ### Install manually
@@ -132,7 +132,7 @@ Run in PowerShell:
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
-dsh plugin --profile web add dsh-archive-manager-plus@latest --registry=https://registry.npmjs.org/
+dsh plugin --profile web add dsh-archive-manager-pro@latest --registry=https://registry.npmjs.org/
 ```
 
 Restart DSH Web, then hard-refresh your browser with `Ctrl+Shift+R`. Open **Settings → Archived sessions** to get started.
