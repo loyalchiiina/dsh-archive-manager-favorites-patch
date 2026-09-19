@@ -80,8 +80,8 @@ Copyright of the pre-existing baseline code remains with MichengAI as required b
   [简体中文](README.zh-CN.md) · [Changelog](CHANGELOG.md) · [Apache-2.0](LICENSE)
 
   [![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
-  [![npm package](https://img.shields.io/npm/v/%40michengai%2Fdsh-archive-manager.svg?label=npm%20package)](https://www.npmjs.com/package/@michengai/dsh-archive-manager)
-  [![npm downloads](https://img.shields.io/npm/dt/%40michengai%2Fdsh-archive-manager.svg?label=npm%20downloads)](https://www.npmjs.com/package/@michengai/dsh-archive-manager)
+  [![npm package](https://img.shields.io/npm/v/dsh-archive-manager-pro.svg?label=npm%20package)](https://www.npmjs.com/package/dsh-archive-manager-pro)
+  [![npm downloads](https://img.shields.io/npm/dt/dsh-archive-manager-pro.svg?label=npm%20downloads)](https://www.npmjs.com/package/dsh-archive-manager-pro)
   [![DSH Web Plugin](https://img.shields.io/badge/DSH%20Web-Plugin-0f766e.svg)](https://github.com/MichengAI/dsh-archive-manager)
 </div>
 
